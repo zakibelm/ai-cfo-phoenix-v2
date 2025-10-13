@@ -1,13 +1,20 @@
+"""
+Agent System v3.0 - With OpenRouter Integration
+Financial AI agents with RAG and LLM capabilities
+"""
+
 import logging
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+
 from services.rag_service import RAGService
+from services.openrouter_service import openrouter_service
 
 logger = logging.getLogger(__name__)
 
 
 class BaseAgent:
-    """Base class for all agents"""
+    """Base class for all agents with OpenRouter integration"""
     
     def __init__(self, name: str, role: str, goal: str, backstory: str):
         self.name = name
@@ -40,9 +47,82 @@ class BaseAgent:
             logger.error(f"{self.name} query error: {str(e)}")
             return []
     
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process a query - to be implemented by subclasses"""
-        raise NotImplementedError
+    def _build_prompt(self, query: str, rag_context: str, language: str = "fr") -> str:
+        """Build prompt with RAG context"""
+        lang_instruction = "Réponds en français de manière professionnelle" if language == "fr" else "Answer in English professionally"
+        
+        prompt = f"""Tu es {self.role}.
+
+{self.backstory}
+
+Objectif : {self.goal}
+
+Contexte pertinent de la base de connaissances :
+{rag_context}
+
+Question : {query}
+
+Instructions :
+- {lang_instruction}
+- Base ta réponse sur le contexte fourni
+- Cite les sources quand pertinent
+- Sois précis et professionnel
+- Structure ta réponse clairement avec sections
+
+Réponse :"""
+        return prompt
+    
+    def process_query(
+        self,
+        query: str,
+        context: Optional[str] = None,
+        model: str = "gpt-4-turbo",
+        language: str = "fr"
+    ) -> Dict[str, Any]]:
+        """Process query with RAG + LLM"""
+        try:
+            # 1. Query knowledge base
+            kb_results = self.query_knowledge_base(query)
+            
+            # 2. Build RAG context
+            if kb_results:
+                rag_context = "\n\n".join([
+                    f"Source {i+1} ({r.get('filename', 'unknown')}):\n{r['text']}"
+                    for i, r in enumerate(kb_results[:3])
+                ])
+            else:
+                rag_context = "Aucun document pertinent trouvé dans la base de connaissances."
+            
+            # 3. Build prompt
+            prompt = self._build_prompt(query, rag_context, language)
+            
+            # 4. Call OpenRouter LLM
+            llm_response = openrouter_service.generate(
+                prompt=prompt,
+                model=model,
+                max_tokens=2000,
+                temperature=0.7
+            )
+            
+            response_text = llm_response.get("choices", [{}])[0].get("message", {}).get("content", "")
+            
+            return {
+                "agent": self.name,
+                "response": response_text,
+                "sources": kb_results,
+                "model_used": model,
+                "language": language,
+                "tokens_used": llm_response.get("usage", {})
+            }
+            
+        except Exception as e:
+            logger.error(f"{self.name} process_query error: {str(e)}")
+            return {
+                "agent": self.name,
+                "response": f"Erreur lors du traitement de la requête : {str(e)}",
+                "sources": [],
+                "error": str(e)
+            }
 
 
 class AccountantAgent(BaseAgent):
@@ -51,40 +131,11 @@ class AccountantAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="AccountantAgent",
-            role="Expert Comptable",
-            goal="Analyser les données comptables, calculer les ratios financiers et produire des rapports",
-            backstory="Expert en comptabilité avec 15 ans d'expérience en normes IFRS et ASPE canadiennes"
+            role="Expert Comptable Certifié CPA",
+            goal="Analyser les données comptables, calculer les ratios financiers et produire des rapports conformes aux normes IFRS/ASPE",
+            backstory="Expert en comptabilité avec 15 ans d'expérience en normes IFRS et ASPE canadiennes. Spécialisé dans l'analyse des états financiers, le calcul de ratios et la détection d'anomalies comptables."
         )
         self.namespace = "finance_accounting"
-    
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process accounting-related queries"""
-        # Query knowledge base
-        kb_results = self.query_knowledge_base(query, filters={"country": "CA"})
-        
-        # Build context from results
-        context_parts = [r["text"] for r in kb_results[:3]]
-        full_context = "\n\n".join(context_parts)
-        
-        # Simulate agent reasoning (in production, this would call an LLM)
-        response = f"""En tant qu'expert comptable, voici mon analyse :
-
-Contexte pertinent trouvé dans la base de connaissances :
-{full_context[:500]}...
-
-Recommandations :
-1. Vérifier la conformité avec les normes IFRS/ASPE
-2. Analyser les ratios de liquidité et de solvabilité
-3. Examiner les écritures de journal pour détecter les anomalies
-
-Sources consultées : {len(kb_results)} documents"""
-        
-        return {
-            "agent": self.name,
-            "response": response,
-            "sources": kb_results,
-            "tool_calls": []
-        }
 
 
 class TaxAgent(BaseAgent):
@@ -93,38 +144,11 @@ class TaxAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="TaxAgent",
-            role="Spécialiste Fiscal Canadien",
-            goal="Assurer la conformité fiscale fédérale et provinciale, optimiser les déductions",
-            backstory="Expert en fiscalité canadienne (T1, T2, TPS/TVQ) avec certification CPA"
+            role="Spécialiste Fiscal Canadien Certifié",
+            goal="Assurer la conformité fiscale fédérale et provinciale, optimiser les déductions et crédits d'impôt",
+            backstory="Expert en fiscalité canadienne (T1, T2, TPS/TVQ) avec certification CPA. Connaissance approfondie de la Loi de l'impôt sur le revenu (LIR) et des lois provinciales."
         )
         self.namespace = "finance_tax"
-    
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process tax-related queries"""
-        kb_results = self.query_knowledge_base(query, filters={"country": "CA"})
-        
-        context_parts = [r["text"] for r in kb_results[:3]]
-        full_context = "\n\n".join(context_parts)
-        
-        response = f"""Analyse fiscale canadienne :
-
-Réglementation applicable :
-{full_context[:500]}...
-
-Points clés :
-- Vérifier les dates limites de déclaration (T1: 30 avril, T2: 6 mois après fin d'exercice)
-- Optimiser les déductions fiscales disponibles
-- Assurer la conformité TPS/TVQ
-- Considérer les crédits d'impôt provinciaux
-
-Références : {len(kb_results)} documents fiscaux consultés"""
-        
-        return {
-            "agent": self.name,
-            "response": response,
-            "sources": kb_results,
-            "tool_calls": []
-        }
 
 
 class ForecastAgent(BaseAgent):
@@ -133,36 +157,11 @@ class ForecastAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="ForecastAgent",
-            role="Analyste Prévisionnel",
-            goal="Créer des prévisions financières et analyser les tendances",
-            backstory="Spécialiste en modélisation financière et analyse prédictive"
+            role="Analyste Prévisionnel Senior",
+            goal="Créer des prévisions financières robustes et analyser les tendances pour anticiper les besoins futurs",
+            backstory="Spécialiste en modélisation financière et analyse prédictive avec 10 ans d'expérience. Expert en projections de flux de trésorerie et analyse de scénarios."
         )
         self.namespace = "finance_forecast"
-    
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process forecasting queries"""
-        kb_results = self.query_knowledge_base(query)
-        
-        response = f"""Analyse prévisionnelle :
-
-Méthodologie :
-- Analyse des tendances historiques
-- Modélisation des flux de trésorerie
-- Scénarios (optimiste, réaliste, pessimiste)
-
-Recommandations :
-1. Surveiller les indicateurs clés de performance
-2. Ajuster les prévisions mensuellement
-3. Maintenir une réserve de trésorerie
-
-Données analysées : {len(kb_results)} sources"""
-        
-        return {
-            "agent": self.name,
-            "response": response,
-            "sources": kb_results,
-            "tool_calls": []
-        }
 
 
 class ComplianceAgent(BaseAgent):
@@ -172,35 +171,10 @@ class ComplianceAgent(BaseAgent):
         super().__init__(
             name="ComplianceAgent",
             role="Expert en Conformité Réglementaire",
-            goal="Assurer la conformité aux normes et réglementations",
-            backstory="Expert en réglementation financière canadienne et internationale"
+            goal="Assurer la conformité aux normes comptables, fiscales et réglementaires canadiennes et internationales",
+            backstory="Expert en réglementation financière canadienne et internationale. Connaissance approfondie des normes IFRS, ASPE, et des exigences réglementaires de l'ARC et Revenu Québec."
         )
         self.namespace = "finance_compliance"
-    
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process compliance queries"""
-        kb_results = self.query_knowledge_base(query)
-        
-        response = f"""Analyse de conformité :
-
-Normes applicables :
-- IFRS / ASPE
-- Réglementations CPA Canada
-- Lois provinciales
-
-Vérifications requises :
-1. Audit des processus
-2. Documentation complète
-3. Formation continue du personnel
-
-Documents de référence : {len(kb_results)}"""
-        
-        return {
-            "agent": self.name,
-            "response": response,
-            "sources": kb_results,
-            "tool_calls": []
-        }
 
 
 class AuditAgent(BaseAgent):
@@ -209,36 +183,11 @@ class AuditAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="AuditAgent",
-            role="Auditeur Financier",
-            goal="Effectuer des audits et identifier les anomalies",
-            backstory="Auditeur certifié avec expertise en détection de fraude"
+            role="Auditeur Financier Certifié",
+            goal="Effectuer des audits rigoureux, identifier les anomalies et recommander des améliorations des contrôles internes",
+            backstory="Auditeur certifié avec expertise en détection de fraude et analyse forensique. 12 ans d'expérience en audit externe et interne."
         )
         self.namespace = "finance_audit"
-    
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process audit queries"""
-        kb_results = self.query_knowledge_base(query)
-        
-        response = f"""Rapport d'audit :
-
-Procédures d'audit :
-- Vérification des contrôles internes
-- Test de substantiation
-- Analyse des anomalies
-
-Recommandations :
-1. Renforcer les contrôles
-2. Documenter les processus
-3. Former le personnel
-
-Sources consultées : {len(kb_results)}"""
-        
-        return {
-            "agent": self.name,
-            "response": response,
-            "sources": kb_results,
-            "tool_calls": []
-        }
 
 
 class ReporterAgent(BaseAgent):
@@ -247,40 +196,15 @@ class ReporterAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             name="ReporterAgent",
-            role="Générateur de Rapports",
-            goal="Synthétiser les informations et créer des rapports professionnels",
-            backstory="Expert en communication financière et visualisation de données"
+            role="Générateur de Rapports Professionnels",
+            goal="Synthétiser les informations complexes et créer des rapports clairs et actionnables pour la direction",
+            backstory="Expert en communication financière et visualisation de données. Spécialisé dans la création de rapports exécutifs et tableaux de bord."
         )
         self.namespace = "default"
-    
-    def process_query(self, query: str, context: Optional[str] = None) -> Dict[str, Any]:
-        """Process reporting queries"""
-        kb_results = self.query_knowledge_base(query)
-        
-        response = f"""Rapport synthétique :
-
-Résumé exécutif :
-Les analyses effectuées par les agents spécialisés ont été compilées.
-
-Sections du rapport :
-1. Situation financière actuelle
-2. Conformité et risques
-3. Prévisions et recommandations
-
-Le rapport complet est disponible en PDF.
-
-Données sources : {len(kb_results)} documents"""
-        
-        return {
-            "agent": self.name,
-            "response": response,
-            "sources": kb_results,
-            "tool_calls": []
-        }
 
 
 class AgentOrchestrator:
-    """Orchestrates multiple agents"""
+    """Orchestrates multiple agents with OpenRouter"""
     
     def __init__(self):
         self.agents = {
@@ -291,36 +215,43 @@ class AgentOrchestrator:
             "AuditAgent": AuditAgent(),
             "ReporterAgent": ReporterAgent()
         }
-        logger.info(f"Initialized {len(self.agents)} agents")
+        logger.info(f"Initialized {len(self.agents)} agents with OpenRouter integration")
     
     def get_agent(self, agent_name: str) -> Optional[BaseAgent]:
         """Get agent by name"""
         return self.agents.get(agent_name)
     
-    def route_query(self, query: str, agent_name: Optional[str] = None) -> Dict[str, Any]:
+    def route_query(
+        self,
+        query: str,
+        agent_name: Optional[str] = None,
+        model: str = "gpt-4-turbo",
+        language: str = "fr"
+    ) -> Dict[str, Any]:
         """Route query to appropriate agent"""
         # If agent specified, use it
         if agent_name and agent_name in self.agents:
             agent = self.agents[agent_name]
-            return agent.process_query(query)
+            return agent.process_query(query, model=model, language=language)
         
         # Otherwise, use simple keyword routing
         query_lower = query.lower()
         
-        if any(word in query_lower for word in ["tax", "fiscal", "t1", "t2", "tps", "tvq"]):
+        if any(word in query_lower for word in ["tax", "fiscal", "t1", "t2", "tps", "tvq", "impôt"]):
             agent = self.agents["TaxAgent"]
-        elif any(word in query_lower for word in ["forecast", "prévision", "projection"]):
+        elif any(word in query_lower for word in ["forecast", "prévision", "projection", "cashflow"]):
             agent = self.agents["ForecastAgent"]
-        elif any(word in query_lower for word in ["audit", "vérification", "contrôle"]):
+        elif any(word in query_lower for word in ["audit", "vérification", "contrôle", "anomalie"]):
             agent = self.agents["AuditAgent"]
-        elif any(word in query_lower for word in ["compliance", "conformité", "réglementation"]):
+        elif any(word in query_lower for word in ["compliance", "conformité", "réglementation", "norme"]):
             agent = self.agents["ComplianceAgent"]
-        elif any(word in query_lower for word in ["rapport", "report", "synthèse"]):
+        elif any(word in query_lower for word in ["rapport", "report", "synthèse", "résumé"]):
             agent = self.agents["ReporterAgent"]
         else:
             agent = self.agents["AccountantAgent"]  # Default
         
-        return agent.process_query(query)
+        logger.info(f"Routing query to {agent.name}")
+        return agent.process_query(query, model=model, language=language)
     
     def get_all_agents_status(self) -> List[Dict[str, Any]]:
         """Get status of all agents"""
@@ -334,3 +265,8 @@ class AgentOrchestrator:
                 "last_query": agent.last_query_time.isoformat() if agent.last_query_time else None
             })
         return status_list
+
+
+# Global instance
+agent_orchestrator = AgentOrchestrator()
+
