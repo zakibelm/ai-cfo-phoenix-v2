@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
 from api.v1.api import api_router
 from models.api_models import HealthResponse
+from models.document import Base
+from core.database import engine
 
 # Configure logging
 logging.basicConfig(
@@ -31,6 +33,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Initialize database tables
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    logger.info("Creating database tables...")
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
+
 # Include API router
 app.include_router(api_router, prefix="/api/v1")
 
@@ -49,51 +59,11 @@ async def root():
 @app.get("/health", response_model=HealthResponse)
 async def health_check():
     """Health check endpoint"""
-    try:
-        # Check services (simplified - in production, actually ping each service)
-        services = {
-            "database": "online",
-            "qdrant": "online",
-            "redis": "online",
-            "minio": "online"
-        }
-        
-        return HealthResponse(
-            status="healthy",
-            version=settings.APP_VERSION,
-            services=services,
-            timestamp=datetime.now()
-        )
-    except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
-        return HealthResponse(
-            status="unhealthy",
-            version=settings.APP_VERSION,
-            services={"error": str(e)},
-            timestamp=datetime.now()
-        )
-
-
-@app.on_event("startup")
-async def startup_event():
-    """Startup event"""
-    logger.info(f"Starting {settings.APP_NAME} v{settings.APP_VERSION}")
-    logger.info(f"Debug mode: {settings.DEBUG}")
-    logger.info(f"Qdrant URL: {settings.QDRANT_URL}")
-    
-    # Initialize database
-    try:
-        from core.database import init_db
-        init_db()
-        logger.info("Database initialized")
-    except Exception as e:
-        logger.error(f"Error initializing database: {str(e)}")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Shutdown event"""
-    logger.info(f"Shutting down {settings.APP_NAME}")
+    return HealthResponse(
+        status="healthy",
+        timestamp=datetime.utcnow().isoformat(),
+        version=settings.APP_VERSION
+    )
 
 
 if __name__ == "__main__":
@@ -102,5 +72,5 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=settings.DEBUG
+        reload=True
     )
