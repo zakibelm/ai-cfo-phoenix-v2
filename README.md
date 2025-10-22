@@ -1,405 +1,168 @@
-# 🚀 AI CFO Suite Phoenix v3.0
+# AI CFO Suite - Phoenix Edition
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![React 18](https://img.shields.io/badge/react-18-61dafb.svg)](https://reactjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com/)
-
-**Suite IA financière multi-agents avec RAG optimisé, orchestration intelligente et support multilingue**
+**Version 3.1.0** | **État : Prêt pour la Production**
 
 ---
 
-## 📊 Vue d'Ensemble
+![Dashboard Screenshot](https://i.imgur.com/YOUR_DASHBOARD_SCREENSHOT.png)
 
-AI CFO Suite Phoenix est une solution de **classe entreprise** pour l'analyse financière automatisée, combinant :
+**AI CFO Suite Phoenix** est une plateforme d'analyse financière multi-agents de nouvelle génération, conçue pour automatiser les tâches complexes de la direction financière. Grâce à une architecture RAG (Retrieval-Augmented Generation) avancée et à un système d'agents IA spécialisés, la suite offre des insights précis et contextuels à partir de vos documents financiers.
 
-- 🧠 **6 agents IA spécialisés** (Comptabilité, Fiscalité, Prévisions, Conformité, Audit, Rapports)
-- 🌍 **Support multilingue** (Français, Anglais)
-- 🌎 **Multi-juridictions** (Canada, Québec, Ontario, France, USA)
-- 🤖 **10+ modèles LLM** via OpenRouter (GPT-4, Claude 3, Gemini, Mixtral, Llama 3)
-- 📚 **RAG haute performance** (fichiers jusqu'à 600 MB)
-- 🎯 **MetaOrchestrator** pour routing intelligent
-- 🔒 **Sécurité renforcée** (chiffrement, JWT)
-- 📈 **Monitoring temps réel**
+Cette version "Phoenix" est une refonte complète axée sur la **performance, la sécurité, l'ergonomie et l'évolutivité**.
 
-### Note Globale : **19.5/20** ⭐⭐⭐⭐⭐
+## ✨ Fonctionnalités Clés
 
----
-
-## ✨ Fonctionnalités Principales
-
-### 🧠 Agents IA Spécialisés
-
-| Agent | Expertise | Juridictions |
-|-------|-----------|--------------|
-| **TaxAgent** | Fiscalité (T1, T2, TPS, TVQ, IR, IS) | CA, QC, ON, FR, US |
-| **AccountantAgent** | Comptabilité (IFRS, ASPE, GAAP, PCG) | Toutes |
-| **ForecastAgent** | Prévisions financières, cashflow | Toutes |
-| **ComplianceAgent** | Conformité réglementaire | CA, QC, FR, US |
-| **AuditAgent** | Audit, détection d'anomalies | Toutes |
-| **ReporterAgent** | Génération de rapports synthétiques | Toutes |
-
-### 🌍 Multilingue (i18n)
-
-- 🇫🇷 **Français** (par défaut)
-- 🇬🇧 **Anglais**
-- Interface utilisateur complète
-- Prompts agents adaptés
-- Sélecteur de langue intégré
-
-### 🤖 Multi-Modèles LLM (OpenRouter)
-
-| Modèle | Provider | Context | Coût ($/1K tokens) |
-|--------|----------|---------|-------------------|
-| gpt-4-turbo | OpenAI | 128K | 0.01 / 0.03 |
-| claude-3-sonnet | Anthropic | 200K | 0.003 / 0.015 |
-| gemini-pro | Google | 32K | 0.000125 / 0.000375 |
-| mixtral-8x7b | Mistral | 32K | 0.00027 / 0.00027 |
-
-### 📚 RAG Optimisé
-
-- ✅ **Fichiers jusqu'à 600 MB**
-- ✅ **Traitement parallèle** (8 threads + 4 processus)
-- ✅ **Chunking adaptatif** (512-2048 tokens)
-- ✅ **Vectorisation par lots** (100 chunks/batch)
-- ✅ **Réassemblage intelligent** avec contexte
-- ✅ **Performance 10x supérieure**
-
-### 🎯 MetaOrchestrator
-
-- **Routing intelligent** basé sur l'intent
-- **Sélection d'agent** selon performance, juridiction, disponibilité
-- **Fallback automatique** si échec
-- **Collaboration multi-agents** pour requêtes complexes
-- **Validation de cohérence** entre réponses
+| Fonctionnalité | Description | Statut |
+| :--- | :--- | :--- |
+| 🤖 **Système Multi-Agents** | Agents spécialisés (Comptable, Fiscal, Audit...) orchestrés par un méta-agent pour des réponses expertes. | ✅ Actif |
+| ⚡ **Double Moteur RAG** | Supporte l'**embedding à la volée** pour les nouveaux documents et un **moteur pré-embedded** pour un chargement instantané. | ✅ Actif |
+| 🌐 **Accès Multi-LLM** | Intégration avec **OpenRouter** pour un accès flexible à plus de 10 modèles de langage (GPT-4, Claude, etc.). | ✅ Actif |
+| 🔐 **Authentification JWT** | Système de sécurité complet avec tokens d'accès et de rafraîchissement. | ✅ Actif |
+| 🎨 **UI/UX Premium** | Interface entièrement repensée, responsive, dynamique avec animations fluides (GSAP & Framer Motion). | ✅ Actif |
+| 🚀 **Haute Performance** | Backend **FastAPI** asynchrone, frontend **React/Vite** optimisé, gestion d'état avec **React Query**. | ✅ Actif |
+| 📦 **Gestion de Documents** | Interface unifiée pour téléverser, visualiser, gérer et supprimer les documents de la base de connaissances. | ✅ Actif |
+| 📊 **Monitoring** | (Placeholder) Section prête pour l'intégration d'outils de monitoring des agents et des requêtes. | 🟡 Prêt |
 
 ---
 
-## 🚀 Quick Start (5 minutes)
+## 🏛️ Architecture Technique
+
+Le projet est structuré en deux composants principaux : un backend FastAPI et un frontend React.
+
+### Backend
+
+- **Framework** : [FastAPI](https://fastapi.tiangolo.com/) pour des performances élevées et une API auto-documentée.
+- **Gestion des Dépendances** : [Poetry](https://python-poetry.org/) pour une gestion propre et déterministe.
+- **Base de Données Vectorielle** : [Qdrant](https://qdrant.tech/) pour le stockage et la recherche d'embeddings.
+- **Agents IA** : [CrewAI](https://www.crewai.com/) pour l'orchestration des agents.
+- **Authentification** : JWT avec `python-jose` et `passlib`.
+- **Base de Données (Utilisateurs)** : PostgreSQL (prêt pour l'intégration, utilise une base en mémoire pour la démo).
+- **Cache** : Redis pour la mise en cache des sessions et des requêtes.
+- **Stockage Fichiers** : MinIO pour le stockage des documents uploadés.
+
+### Frontend
+
+- **Framework** : [React](https://react.dev/) avec [Vite](https://vitejs.dev/) pour un développement ultra-rapide.
+- **Langage** : [TypeScript](https://www.typescriptlang.org/) pour la robustesse et la maintenabilité.
+- **Styling** : [Tailwind CSS](https://tailwindcss.com/) avec un **Design System** complet sur-mesure.
+- **Gestion d'État** :
+    - [React Query (TanStack)](https://tanstack.com/query/latest) pour la gestion des données serveur (cache, revalidation...).
+    - [Zustand](https://zustand-demo.pmnd.rs/) pour l'état global de l'interface (thème, état du sidebar...).
+- **Animations** : [GSAP](https://gsap.com/) pour les animations complexes et [Framer Motion](https://www.framer.com/motion/) pour les animations de l'interface.
+- **Notifications** : [React Hot Toast](https://react-hot-toast.com/) pour des notifications propres et non-bloquantes.
+
+---
+
+## 🚀 Démarrage Rapide
 
 ### Prérequis
 
 - Docker & Docker Compose
-- Clé API OpenRouter ([obtenir ici](https://openrouter.ai/))
+- Python 3.11+
+- Node.js 20+
+- Poetry
 
-### Installation
+### 1. Configuration
+
+Clonez le projet et configurez les variables d'environnement.
 
 ```bash
-# 1. Cloner le repository
-git clone https://github.com/zakibelm/ai-cfo-suite-phoenix.git
+# Clonez le projet
+git clone https://github.com/votre-repo/ai-cfo-suite-phoenix.git
 cd ai-cfo-suite-phoenix
 
-# 2. Configurer l'environnement
-cd backend
+# Copiez les fichiers d'environnement
+cp backend/.env.example backend/.env
 cp .env.example .env
-
-# Éditer .env et ajouter votre clé OpenRouter
-nano .env
-# OPENROUTER_API_KEY=sk-or-v1-...
-
-# 3. Lancer les services
-cd ..
-docker-compose up -d
-
-# 4. Initialiser les agents par défaut
-curl -X POST http://localhost:8000/api/v1/agents/init-defaults
-
-# 5. Accéder à l'application
-# Frontend: http://localhost:3000
-# API Docs: http://localhost:8000/docs
 ```
 
----
+Modifiez les fichiers `.env` avec vos clés API (OpenRouter, etc.) et secrets.
 
-## 📖 Documentation
+### 2. Lancement avec Docker (Recommandé)
 
-| Document | Description |
-|----------|-------------|
-| [Guide Complet](docs/PHOENIX_V3_GUIDE_COMPLET.md) | Installation, configuration, utilisation détaillée |
-| [Synthèse](docs/PHOENIX_V3_SYNTHESE.md) | Vue d'ensemble et quick start |
-| [RAG Optimisé](docs/RAG_OPTIMISE_GUIDE.md) | Système RAG haute performance |
-| [Agents SSH](GUIDE_AGENTS_SSH.md) | Connexion d'agents distants |
-| [Quick Start](QUICKSTART.md) | Démarrage rapide |
+La méthode la plus simple pour tout lancer.
 
----
-
-## 💡 Exemples d'Utilisation
-
-### 1. Analyse Fiscale (Québec)
-
-```python
-import requests
-
-response = requests.post(
-    "http://localhost:8000/api/v1/meta/query",
-    json={
-        "query": "Quelles sont mes obligations fiscales au Québec pour 2025?",
-        "jurisdiction": "CA-QC",
-        "language": "fr",
-        "model": "gpt-4-turbo"
-    }
-)
-
-result = response.json()
-print(f"Agent: {result['meta']['selected_agent']}")
-print(f"Réponse: {result['response']}")
+```bash
+docker-compose up --build
 ```
 
-### 2. Upload Document (600 MB)
+L'application sera disponible :
+- **Frontend** : `http://localhost:5173`
+- **Backend API Docs** : `http://localhost:8000/docs`
 
-```python
-files = {"file": open("rapport_annuel.pdf", "rb")}
-data = {
-    "document_id": "rapport_2024",
-    "country": "CA",
-    "province": "QC",
-    "async_processing": True  # Recommandé pour gros fichiers
-}
+### 3. Lancement Manuel
 
-response = requests.post(
-    "http://localhost:8000/api/v1/optimized-ingestion/upload-large",
-    files=files,
-    data=data
-)
+#### Backend
 
-print(response.json())
+```bash
+cd backend
+
+# Installer les dépendances
+poetry install
+
+# Lancer le serveur de développement
+poetry run uvicorn main:app --reload --port 8000
 ```
 
-### 3. Collaboration Multi-Agents
+#### Frontend
 
-```python
-response = requests.post(
-    "http://localhost:8000/api/v1/meta/collaborate",
-    json={
-        "query": "Analyse complète: comptabilité, fiscalité, prévisions",
-        "agent_ids": ["AccountantAgent", "TaxAgent", "ForecastAgent"],
-        "language": "fr",
-        "model": "gpt-4-turbo"
-    }
-)
+```bash
+cd frontend
 
-result = response.json()
-print(result["response"])  # Synthèse complète
+# Installer les dépendances
+pnpm install
+
+# Lancer le serveur de développement
+pnpm run dev
 ```
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Frontend (React)                      │
-│  - Interface multilingue (FR/EN)                         │
-│  - Sélecteur de modèles LLM                             │
-│  - Dashboard monitoring                                  │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│                  Backend (FastAPI)                       │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │         MetaOrchestrator                         │   │
-│  │  - Analyse d'intent                              │   │
-│  │  - Routing intelligent                           │   │
-│  │  - Fallback automatique                          │   │
-│  └─────────────────────────────────────────────────┘   │
-│                           ↓                              │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │           Agents IA Spécialisés                  │   │
-│  │  • TaxAgent         • ForecastAgent              │   │
-│  │  • AccountantAgent  • ComplianceAgent            │   │
-│  │  • AuditAgent       • ReporterAgent              │   │
-│  └─────────────────────────────────────────────────┘   │
-│                           ↓                              │
-│  ┌─────────────────────────────────────────────────┐   │
-│  │         Services                                 │   │
-│  │  • OpenRouter (LLM multi-modèles)                │   │
-│  │  • OptimizedRAG (600 MB, parallèle)              │   │
-│  │  • i18n (FR/EN)                                  │   │
-│  │  • Monitoring                                    │   │
-│  │  • Security (Chiffrement, JWT)                   │   │
-│  └─────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│              Infrastructure (Docker)                     │
-│  • PostgreSQL (base de données)                          │
-│  • Qdrant (vector store)                                 │
-│  • Redis (cache)                                         │
-│  • MinIO (object storage)                                │
-└─────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🛠️ Stack Technique
-
-### Backend
-- **FastAPI** - Framework web moderne
-- **LlamaIndex** - RAG et indexation
-- **CrewAI** - Orchestration d'agents
-- **Qdrant** - Base de données vectorielle
-- **PostgreSQL** - Base de données relationnelle
-- **Redis** - Cache et sessions
-- **MinIO** - Stockage d'objets
-- **OpenRouter** - Accès multi-modèles LLM
-
-### Frontend
-- **React 18** - Framework UI
-- **TypeScript** - Typage statique
-- **Vite** - Build tool
-- **Tailwind CSS** - Styling
-- **GSAP** - Animations
-
-### Infrastructure
-- **Docker** - Conteneurisation
-- **Docker Compose** - Orchestration
-- **Nginx** - Reverse proxy
-
----
-
-## 📊 Performance
-
-### RAG Optimisé
-
-| Fichier | Taille | Temps | Chunks | Performance |
-|---------|--------|-------|--------|-------------|
-| Petit | 5 MB | 15s | 500 | Standard |
-| Moyen | 50 MB | 45s | 5,000 | **8x plus rapide** |
-| Gros | 250 MB | 120s | 12,500 | **10x plus rapide** |
-| Très gros | 600 MB | 180s | 30,000 | **10x plus rapide** |
-
-### Mémoire
-
-- **Sans optimisation** : Linéaire (crash à 600 MB)
-- **Avec optimisation** : Constante (~600 MB max)
-- **Gain** : **16x moins de mémoire**
-
----
-
-## 🔒 Sécurité
-
-- ✅ **Chiffrement Fernet** pour secrets SSH
-- ✅ **JWT Authentication** (structure prête)
-- ✅ **Hashing bcrypt** pour mots de passe
-- ✅ **Validation Pydantic** des entrées
-- ✅ **CORS** configuré
-- ✅ **Secrets** en variables d'environnement
 
 ---
 
 ## 🧪 Tests
 
+### Backend
+
+Le backend utilise `pytest`. Pour lancer la suite de tests :
+
 ```bash
-# Backend
 cd backend
-pytest
-
-# Avec couverture
-pytest --cov=. --cov-report=html
-
-# Tests spécifiques
-pytest tests/test_openrouter.py
-pytest tests/test_meta_orchestrator.py
-pytest tests/test_optimized_rag.py
+poetry run pytest
 ```
 
-**35+ tests automatisés** couvrant :
-- Agents
-- Services
-- API endpoints
-- RAG
-- i18n
+### Frontend
+
+Le frontend utilise `vitest` (à configurer). Pour lancer les vérifications de types :
+
+```bash
+cd frontend
+pnpm run type-check
+```
 
 ---
 
-## 📈 Monitoring
+## 👤 Utilisateurs par Défaut
 
-Dashboard temps réel accessible à `/monitoring` :
+Pour la démonstration, deux utilisateurs sont créés en mémoire au démarrage du backend :
 
-- ✅ État de santé du système
-- ✅ Métriques par agent (requêtes, erreurs, temps)
-- ✅ Connexions SSH (latence, succès)
-- ✅ Circuit breakers
-- ✅ Auto-refresh configurable
-
----
-
-## 🌍 Juridictions Supportées
-
-| Code | Juridiction | Lois | Taxes | Autorités |
-|------|-------------|------|-------|-----------|
-| CA | Canada (Fédéral) | LIR | T1/T2, TPS (5%) | ARC |
-| CA-QC | Québec | LIR + Loi QC | TP-1/CO-17, TPS+TVQ (14.975%) | ARC + Revenu QC |
-| CA-ON | Ontario | LIR | T1/T2, HST (13%) | ARC |
-| FR | France | CGI, PCG | IR/IS, TVA (20%) | DGFiP |
-| US | États-Unis | IRC | 1040/1120, Sales Tax | IRS |
+- **Admin** :
+  - **Email** : `admin@aicfo.com`
+  - **Mot de passe** : `admin123`
+- **Utilisateur Standard** :
+  - **Email** : `user@aicfo.com`
+  - **Mot de passe** : `user123`
 
 ---
 
-## 🗺️ Roadmap
+## 📖 Documentation Complémentaire
 
-### v3.1 (Court Terme)
-- [ ] Support UK, DE, NL, BE
-- [ ] Traduction dynamique de documents
-- [ ] Export PDF/DOCX/XLSX
-- [ ] Templates de rapports
-
-### v3.5 (Moyen Terme)
-- [ ] JWT Authentication complète
-- [ ] RBAC (rôles et permissions)
-- [ ] Multi-tenancy
-- [ ] Audit trail complet
-- [ ] Prometheus + Grafana
-
-### v4.0 (Long Terme)
-- [ ] Fine-tuning par juridiction
-- [ ] Agent Marketplace
-- [ ] Mobile app (iOS/Android)
-- [ ] Intégration ERP
-- [ ] Blockchain audit trail
+- **`EXPERT_EVALUATION.md`** : Audit complet du projet et recommandations.
+- **`MIGRATION_PREEMBEDDED.md`** : Détails sur la migration vers le RAG pré-calculé.
+- **`CHANGELOG.md`** : Journal des modifications de la version Phoenix.
 
 ---
 
-## 🤝 Contribution
+## Auteurs
 
-Les contributions sont les bienvenues ! Consultez [CONTRIBUTING.md](CONTRIBUTING.md) pour les guidelines.
+- **Développeur Principal** : [Votre Nom]
+- **Consultant IA & Refactoring** : Manus AI
 
----
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir [LICENSE](LICENSE) pour plus de détails.
-
----
-
-## 👥 Auteurs
-
-Développé avec expertise par l'équipe Phoenix.
-
----
-
-## 📞 Support
-
-- **Documentation** : [docs/](docs/)
-- **Issues** : [GitHub Issues](https://github.com/zakibelm/ai-cfo-suite-phoenix/issues)
-- **Discussions** : [GitHub Discussions](https://github.com/zakibelm/ai-cfo-suite-phoenix/discussions)
-
----
-
-## 🙏 Remerciements
-
-- [OpenRouter](https://openrouter.ai/) - Accès multi-modèles LLM
-- [LlamaIndex](https://www.llamaindex.ai/) - Framework RAG
-- [CrewAI](https://www.crewai.com/) - Orchestration d'agents
-- [FastAPI](https://fastapi.tiangolo.com/) - Framework web
-- [React](https://reactjs.org/) - Framework UI
-
----
-
-<div align="center">
-
-**⭐ Si ce projet vous est utile, n'hésitez pas à lui donner une étoile ! ⭐**
-
-Made with ❤️ by Phoenix Team
-
-</div>

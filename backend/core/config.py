@@ -49,17 +49,18 @@ class Settings(BaseSettings):
     MAX_ITERATIONS: int = 10
     
     # Security
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    SECRET_KEY: str = "your-secret-key-change-in-production-min-32-chars-long-for-security"
     ENCRYPTION_KEY: str = "your-encryption-key-32-bytes-long"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # i18n (Internationalization)
     DEFAULT_LANGUAGE: str = "fr"  # French by default
-    SUPPORTED_LANGUAGES: list = ["fr", "en"]  # French and English
+    SUPPORTED_LANGUAGES: str = "fr,en"  # French and English
     
     # CORS
-    CORS_ORIGINS: list = ["http://localhost:3000", "http://localhost:5173"]
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
     
     class Config:
         env_file = ".env"

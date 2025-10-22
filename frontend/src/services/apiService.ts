@@ -98,3 +98,42 @@ export const fetchAgents = async (): Promise<any[]> => {
 };
 
 export default api;
+
+
+// Function to list documents from the pre-embedded RAG
+export const listDocuments = async (collectionName: string): Promise<any[]> => {
+  const response = await fetch(`${API_BASE_URL}/preembedded-ingestion/documents/${collectionName}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch documents');
+  }
+  const data = await response.json();
+  return data.documents;
+};
+
+// Function to delete a document from the RAG
+export const deleteDocument = async (collectionName: string, documentId: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/preembedded-ingestion/documents/${collectionName}/${documentId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete document');
+  }
+};
+
+// Function to download document content
+export const downloadDocument = async (collectionName: string, documentId: string, filename: string): Promise<void> => {
+  const response = await fetch(`${API_BASE_URL}/preembedded-ingestion/documents/${collectionName}/${documentId}/download`);
+  if (!response.ok) {
+    throw new Error('Failed to download document');
+  }
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+};
+

@@ -1,0 +1,67 @@
+# Requirements simplifiés pour mode Pre-embedded
+# Utilise les embeddings déjà calculés, pas besoin de LlamaIndex embeddings
+
+# FastAPI and server
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# Database
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# Vector DB (Qdrant seulement, pas d'embedding)
+qdrant-client==1.7.3
+
+# AI Agents
+crewai==0.11.0
+autogen-agentchat==0.2.36
+
+# LLM (pas d'embeddings)
+openai==1.10.0
+
+# Cache and Storage
+redis==5.0.1
+minio==7.2.3
+
+# SSH for remote agents
+paramiko==3.4.0
+
+# Document Processing (lecture seulement)
+pypdf==4.0.1
+python-docx==1.1.0
+beautifulsoup4==4.12.3
+lxml==5.1.0
+
+# Utilities
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dateutil==2.8.2
+httpx==0.26.0
+tenacity==8.2.3
+
+# Monitoring and Logging
+prometheus-client==0.19.0
+python-json-logger==2.0.7
+
+# Testing
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-asyncio==0.21.1
+pytest-mock==3.12.0
+
+# OpenRouter
+requests==2.31.0
+
+# SUPPRIMÉ (plus nécessaire pour pre-embedded):
+# - llama-index==0.10.68
+# - llama-index-vector-stores-qdrant==0.2.11
+# - llama-index-embeddings-huggingface
+# - sentence-transformers==2.3.1
+# - huggingface-hub==0.20.3
+# - transformers==4.37.2
+# - torch==2.1.2
+
