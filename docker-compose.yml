@@ -110,21 +110,21 @@ services:
     volumes:
       - ./backend:/app
       - backend_cache:/root/.cache
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
-    #   qdrant:
-    #     condition: service_healthy
-    #   redis:
-    #     condition: service_healthy
-    #   minio:
-    #     condition: service_healthy
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/monitoring/health"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 10
-    #   start_period: 30s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/monitoring/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     networks:
       - aicfo-network
     restart: unless-stopped
@@ -144,15 +144,15 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    # depends_on:
-    #   backend:
-    #     condition: service_healthy
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:3000"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 20s
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - aicfo-network
     restart: unless-stopped
