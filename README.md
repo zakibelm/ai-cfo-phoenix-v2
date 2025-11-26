@@ -102,9 +102,11 @@ cd backend
 ```
 
 > ℹ️ Lors de la première exécution, le script installe automatiquement les dépendances avec
-> `poetry install`, puis démarre le serveur FastAPI sur le port `8000`. Les exécutions suivantes
-> redémarrent simplement `uvicorn`. Utilisez les variables d'environnement `HOST` et `PORT` pour
-> personnaliser l'adresse d'écoute si besoin.
+> `poetry install` (si Poetry est présent). S'il n'est pas installé, le script crée un
+> environnement virtuel local `.venv` et installe `requirements.txt` via `pip`, puis démarre
+> le serveur FastAPI sur le port `8000`. Les exécutions suivantes redémarrent simplement
+> `uvicorn`. Utilisez les variables d'environnement `HOST` et `PORT` pour personnaliser
+> l'adresse d'écoute si besoin.
 
 #### Frontend
 
