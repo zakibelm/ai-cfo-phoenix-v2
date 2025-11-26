@@ -106,7 +106,10 @@ cd backend
 > environnement virtuel local `.venv` et installe `requirements.txt` via `pip`, puis démarre
 > le serveur FastAPI sur le port `8000`. Les exécutions suivantes redémarrent simplement
 > `uvicorn`. Utilisez les variables d'environnement `HOST` et `PORT` pour personnaliser
-> l'adresse d'écoute si besoin.
+> l'adresse d'écoute si besoin. Pour les environnements CI/tests, vous pouvez définir
+> `BACKEND_START_MODE=print` (affiche la commande choisie sans lancer le serveur) et
+> `BACKEND_SKIP_INSTALL=1` (désactive les installations) afin de valider le bootstrap
+> sans réseau ni dépendances externes.
 
 #### Frontend
 
