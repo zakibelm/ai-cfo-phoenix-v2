@@ -97,12 +97,19 @@ L'application sera disponible :
 ```bash
 cd backend
 
-# Installer les dépendances
-poetry install
-
-# Lancer le serveur de développement
-poetry run uvicorn main:app --reload --port 8000
+# Installation automatique (si nécessaire) + lancement du serveur
+./scripts/start_backend.sh
 ```
+
+> ℹ️ Lors de la première exécution, le script installe automatiquement les dépendances avec
+> `poetry install` (si Poetry est présent). S'il n'est pas installé, le script crée un
+> environnement virtuel local `.venv` et installe `requirements.txt` via `pip`, puis démarre
+> le serveur FastAPI sur le port `8000`. Les exécutions suivantes redémarrent simplement
+> `uvicorn`. Utilisez les variables d'environnement `HOST` et `PORT` pour personnaliser
+> l'adresse d'écoute si besoin. Pour les environnements CI/tests, vous pouvez définir
+> `BACKEND_START_MODE=print` (affiche la commande choisie sans lancer le serveur) et
+> `BACKEND_SKIP_INSTALL=1` (désactive les installations) afin de valider le bootstrap
+> sans réseau ni dépendances externes.
 
 #### Frontend
 

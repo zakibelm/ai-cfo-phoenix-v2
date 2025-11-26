@@ -1,5 +1,11 @@
 import pytest
 from unittest.mock import Mock, patch, MagicMock
+
+pytest.importorskip("qdrant_client")
+pytest.importorskip("sentence_transformers")
+pytest.importorskip("llama_index")
+pytest.importorskip("sqlalchemy")
+
 from agents.dynamic_agent_system import DynamicAgent, DynamicAgentOrchestrator
 from models.database import AgentConfig
 

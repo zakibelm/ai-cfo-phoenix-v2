@@ -1,7 +1,9 @@
 import pytest
 from unittest.mock import Mock, patch, MagicMock
+
+paramiko = pytest.importorskip("paramiko")
+
 from services.ssh_agent_service import SSHAgentService
-import paramiko
 
 
 @pytest.fixture
